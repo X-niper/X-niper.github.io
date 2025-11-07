@@ -1,0 +1,432 @@
+<html lang="en" data-theme="dark">
+  <head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-EV26270YGG");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phased DMD</title>
+    <meta name="description" content="Few-step Distribution Matching Distillation via Score Matching within Subintervals">
+    <meta name="keywords" content="Video generation, image generation, text-to-video, image-to-video, text-to-image, diffusion model, fast, real-time, distillation, DMD">
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+
+  <body>
+    <section id="hero-content">
+      <div class="content">
+        <h1>Phased DMD</h1>
+        <h2>Few-step Distribution Matching Distillation via Score Matching within Subintervals</h2>
+        <p class="authors">Xiangyu Fan, Zesong Qiu, Zhuguanyu Wu, Fanzhou Wang, Zhiqian Lin, Tianxiang Ren, Dahua Lin, Ruihao Gong, <span><a href="https://scholar.google.com/citations?hl=zh-CN&user=jZH2IPYAAAAJ" target="_blank">Lei Yang</a><sup>✉</sup></span></p>
+        <p class="affiliation">SenseTime Research</p>
+      </div>
+      <div class="multi-buttons">
+        <a href="https://arxiv.org/abs/2510.27684" target="_blank">
+          <button class="file-button">
+            <svg class="file-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Paper
+          </button>
+        </a>
+        <a href="https://github.com/ModelTC/Wan2.2-Lightning" target="_blank">
+          <button class="file-button">
+            <svg class="file-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.477 2 2 6.477 2 12C2 16.42 4.87 20.17 8.84 21.5C9.34 21.58 9.5 21.27 9.5 21C9.5 20.77 9.5 20.14 9.5 19.31C6.73 19.91 6.14 17.97 6.14 17.97C5.68 16.81 5.03 16.5 5.03 16.5C4.12 15.88 5.1 15.9 5.1 15.9C6.1 15.97 6.63 16.93 6.63 16.93C7.5 18.45 8.97 18 9.54 17.76C9.63 17.11 9.89 16.67 10.17 16.42C7.95 16.17 5.62 15.31 5.62 11.5C5.62 10.39 6 9.5 6.65 8.79C6.55 8.54 6.2 7.5 6.75 6.15C6.75 6.15 7.59 5.88 9.5 7.17C10.29 6.95 11.15 6.84 12 6.84C12.85 6.84 13.71 6.95 14.5 7.17C16.41 5.88 17.25 6.15 17.25 6.15C17.8 7.5 17.45 8.54 17.35 8.79C18 9.5 18.38 10.39 18.38 11.5C18.38 15.32 16.04 16.16 13.81 16.41C14.17 16.72 14.5 17.33 14.5 18.26C14.5 19.6 14.5 20.68 14.5 21C14.5 21.27 14.66 21.59 15.17 21.5C19.14 20.16 22 16.42 22 12C22 6.477 17.523 2 12 2Z" fill="currentColor"/>
+            </svg>
+            Code
+          </button>
+        </a>
+      </div>
+    </section>
+
+
+
+    <section>
+      <div class="section-title">
+        Abstract
+      </div>
+      <div class="section-content">
+      Distribution Matching Distillation (DMD)<sup class="citation"><a href="#ref-DMD2"></a></sup> distills score-based generative models
+      into efficient one-step generators, without requiring a one-to-one correspondence
+      with the sampling trajectories of their teachers. However, limited model capacity
+      causes one-step distilled models underperform on complex generative tasks, e.g.,
+      synthesizing intricate object motions in text-to-video generation.
+      Directly extending DMD to multi-step distillation increases memory usage and computational
+      depth, leading to instability and reduced efficiency.
+      While prior works<sup class="citation"><a href="#ref-self-forcing"></a></sup>  propose
+      stochastic gradient truncation (SGTS) as a potential solution,
+      we observe that it substantially reduces the generation diversity of multi-step distilled models,
+      bringing it down to the level of their one-step counterparts.
+      To address these limitations,
+      we propose Phased DMD, a multi-step distillation framework that bridges the
+      idea of phase-wise distillation with Mixture-of-Experts (MoE), reducing learning
+      difficulty while enhancing model capacity. Phased DMD is built upon two key
+      ideas: <b>progressive distribution matching</b> and <b>score matching within subintervals</b>.
+      First, our method divides the SNR range into subintervals,
+      progressively refining the model to higher SNR levels, to better capture complex distributions.
+      Next, to ensure the training objective within each subinterval is accurate,
+      we have conducted rigorous mathematical derivations. We validate Phased DMD by distilling
+      state-of-the-art image and video generation models, including Qwen-Image (20B
+      parameters) and Wan2.2 (28B parameters). Experimental results demonstrate that
+      Phased DMD preserves output diversity better than DMD while retaining key generative capabilities of the original models.
+      </div>
+    </section>
+      
+    <section>
+      <div class="section-title">
+        Phased DMD for Video Generation
+      </div>
+      <div class="section-content">
+        In contrast to DMD with SGTS,
+        Phased-DMD achieves higher fidelity in replicating both the <b>motion patterns</b>
+        and the <b>camera movements</b> present in the original teacher model's video outputs.
+        The video below presents a comparative analysis of the two methods on the wan2.2-T2V-A14B model.
+        The first column features outputs from the model distilled using DMD with SGTS,
+        the second column displays results from Phased-DMD,
+        and the third column presents generations from the base teacher model.
+        This compilation comprises all 220 test examples from our evaluation set,
+        with all videos generated using a fixed seed of 42.
+        The presentation is <b>not</b> cherry-picked and is representative of typical performance.
+        As the results demonstrate, the base model, utilizing 40 steps (80 NFE),
+        represents the upper benchmark of performance.
+        Phased-DMD, using only 4 steps (4 NFE), yields significantly superior results to standard DMD,
+        particularly in the fidelity of motion dynamics and camera movement.
+        Notably, the color rendition in Phased-DMD generations also more closely aligns with that of the base model.
+      </div>
+      <div class="section-video-container">
+            <iframe  src="https://www.youtube.com/embed/W9Pi27WN3mc?si=2pDLbTFUrHgx8--k?autoplay=1&vq=hd1440&autoplay=1&mute=1&enablejsapi=1" title="YouTube video player" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="section-content">
+        We quantitatively evaluate motion intensity using 
+        the mean absolute optical flow, computed with  Unimatch<sup class="citation"><a href="#ref-unimatch"></a></sup>
+        and the dynamic degree metric from VBench<sup class="citation"><a href="#ref-Vbench"></a></sup>.
+        The results, summarized in the table below,
+        confirm that Phased-DMD more accurately captures motion dynamics than DMD with SGTS for <b>both T2V and I2V tasks</b>.
+      </div>
+        
+      <div class="table-container">
+          <table>
+              <thead>
+                  <tr>
+                      <th rowspan="2" class="method-column">Method</th>
+                      <th colspan="2" class="group-header">T2V</th>
+                      <th colspan="2" class="group-header">I2V</th>
+                  </tr>
+                  <tr>
+                      <th class="sub-header">Optical Flow ↑</th>
+                      <th class="sub-header">Dynamic Degree ↑</th>
+                      <th class="sub-header">Optical Flow ↑</th>
+                      <th class="sub-header">Dynamic Degree ↑</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td class="method-column">Base model</td>
+                      <td class="highlight">10.26</td>
+                      <td class="underline">79.55%</td>
+                      <td class="underline">9.32</td>
+                      <td class="underline">82.27%</td>
+                  </tr>
+                  <tr>
+                      <td class="method-column">DMD with SGTS (lightning v1.x)</td>
+                      <td>3.23</td>
+                      <td>65.45%</td>
+                      <td>7.87</td>
+                      <td>80.00%</td>
+                  </tr>
+                  <tr>
+                      <td class="method-column">Phased DMD (lightning v2.0)</td>
+                      <td class="underline">9.30</td>
+                      <td class="highlight">82.27%</td>
+                      <td class="highlight">9.84</td>
+                      <td class="highlight">83.64%</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+    </section>
+
+
+    <section>
+      <div class="section-title">
+        Phased DMD for Image Generation
+      </div>
+      <div class="section-content">
+        We perform image generation distillation experiments on three base models, wan2.1-T2V-14B, wan2.2-T2V-A14B and Qwen-Image-20B.
+        To evaluate generative diversity, we constructed a text-to-image test set comprising 21 prompts.
+        Each prompt provides a short description of the image content without detailed specifications.
+        For each prompt, we generated 8 images using seeds from 0 to 7. For the base model, images are
+        sampled using 40 steps with a CFG scale of 4. All distilled models are sampled using 4 steps and
+        a CFG scale of 1. Generative diversity is evaluated using two complementary
+        metrics: (1) the mean pairwise cosine similarity of DINOv3 features<sup class="citation"><a href="#ref-Dinov3"></a></sup>,
+        where lower values indicate higher diversity, and (2) the mean pairwise LPIPS distance<sup class="citation"><a href="#ref-lpips"></a></sup>,
+        where higher values denote greater diversity.
+        Both metrics are computed across images
+        generated from the same prompt using different seeds.
+        As expected, the base models achieve the highest diversity.
+        Phased DMD outperforms both vanilla DMD and DMD with SGTS.
+        The diversity improvement on Qwen-Image is marginal. We argue this stems from the base model’s
+        own limited output diversity.
+      </div>
+      <div class="table-container">
+          <table>
+              <thead>
+                  <tr>
+                      <th rowspan="2" class="method-column">Method</th>
+                      <th colspan="2" class="group-header">Wan2.1-T2V-14B</th>
+                      <th colspan="2" class="group-header">Wan2.2-T2V-A14B</th>
+                      <th colspan="2" class="group-header">Qwen-Image</th>
+                  </tr>
+                  <tr>
+                      <th class="sub-header">DINOv3 ↓</th>
+                      <th class="sub-header">LPIPS ↑</th>
+                      <th class="sub-header">DINOv3 ↓</th>
+                      <th class="sub-header">LPIPS ↑</th>
+                      <th class="sub-header">DINOv3 ↓</th>
+                      <th class="sub-header">LPIPS ↑</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td class="method-column">Base model</td>
+                      <td class="highlight">0.708</td>
+                      <td class="highlight">0.607</td>
+                      <td class="highlight">0.732</td>
+                      <td class="highlight">0.531</td>
+                      <td class="highlight">0.907</td>
+                      <td class="highlight">0.483</td>
+                  </tr>
+                  <tr>
+                      <td class="method-column">DMD</td>
+                      <td>0.825</td>
+                      <td>0.522</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                  </tr>
+                  <tr>
+                      <td class="method-column">DMD with SGTS</td>
+                      <td>0.826</td>
+                      <td>0.521</td>
+                      <td>0.828</td>
+                      <td>0.447</td>
+                      <td class="underline">0.941</td>
+                      <td>0.309</td>
+                  </tr>
+                  <tr>
+                      <td class="method-column">Phased DMD (Ours)</td>
+                      <td class="underline">0.782</td>
+                      <td class="underline">0.544</td>
+                      <td class="underline">0.768</td>
+                      <td class="underline">0.481</td>
+                      <td>0.958</td>
+                      <td class="underline">0.322</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <br>
+      <br>
+
+      <div class="section-content">
+        The following four images were generated by the distilled Wan2.1-T2V-14B model using Phased-DMD,
+        based on the prompt: "A mother braiding her daughter hair, sunlight warming the room."
+        The outputs exhibit considerable diversity in color schemes, compositional structure, and lighting conditions.
+      </div>
+      <div class="gallery">
+          <!-- 第一行 -->
+          <div class="image-row">
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/wan2.1-t2v-14b/seed0.png">
+                  </div>
+              </div>
+              
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/wan2.1-t2v-14b/seed1.png">
+                  </div>
+              </div>
+              
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/wan2.1-t2v-14b/seed2.png">
+                  </div>
+              </div>
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/wan2.1-t2v-14b/seed3.png">
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="section-content">
+        Phased-DMD successfully maintains high image quality,
+        particularly the precise text-rendering capability inherent to the base Qwen-Image model.
+        Representative examples are presented below.
+      </div>
+        
+      <div class="gallery">
+          <!-- 第一行 -->
+          <div class="image-row">
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/qwen-image/qwen_image_phased_dmd1.png">
+                  </div>
+              </div>
+              
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/qwen-image/qwen_image_phased_dmd2.png">
+                  </div>
+              </div>
+              
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/qwen-image/qwen_image_phased_dmd3.png">
+                  </div>
+              </div>
+              <div class="image-card">
+                  <div class="image-container">
+                      <img src="./assets/qwen-image/qwen_image_phased_dmd4.png">
+                  </div>
+              </div>
+          </div>
+      </div>
+    </section>
+
+
+
+    <section>
+      <div class="section-title">
+        Method
+      </div>
+
+      <div class="section-content">
+      The figure below illustrates the differences among vanilla DMD, DMD with SGTS, and our proposed Phased DMD.
+
+      (a) Directly extending DMD to multi-step distillation paradigm increases memory usage and computational depth.
+
+      (b) The SGTS approach addresses this by selecting a random step as the last generation diffusion step,
+      recording gradients only to that step.
+      While this strategy substantially reduces memory consumption and computational cost during training,
+      it can degenerate into a one-step distillation in certain iterations,
+      thereby limiting the model's generative capacity.
+
+      (c) Phased DMD avoids this issue by partitioning the distillation process into distinct phases and applying supervision at intermediate timesteps.
+      In each phase except the last, the generator is optimized
+      to minimize the reverse KL divergence at an intermediate timestep, while the fake diffusion model
+      is updated via score matching within a subinterval of the diffusion process.
+
+      (d) Crucially, Phased DMD remains compatible with SGTS, enabling
+      4-step inference across 2 phases while simplifying the system complexity for both training and inference.
+      </div>
+      <div class="gallery-one-column">
+        <div class="image-row">
+              <div class="image-card-one-column">
+                  <div class="image-container">
+                    <img src="./assets/method/phased_dmd_diagram.png"></img>
+                  </div>
+              </div>
+        </div>
+      <div class="section-content">
+      DMD and related methods within the Variational Score Distillation (VSD) framework
+      comprise three core components: a teacher diffusion model \(T\), a "fake" diffusion model \(F\), and a generator  \(G\) to be distilled.
+      The theoretical validity of this framework is predicated on the relationship between the diffusion model's prediction and the score function \(\nabla_{x_t} \log(p(x_t)) \).
+
+      Formally, assuming the teacher diffusion model's prediction follows \( T_(x_t) = a_t \nabla_{x_t} \log(p(x_t)) + b_t x_t \)
+      and the fake diffusion model's prediction follows  \(F_(x_t) = c_t \nabla_{x_t} \log(p(x_t)) + d_t x_t \),
+      the theoretical justification for DMD and related VSD methods necessitates the coefficients to be identical—that is,
+      \(a_t = c_t \) and \( b_t = d_t \).
+
+      The satisfaction of this condition is straightforward in vanilla DMD and DMD with SGTS, given the direct alignment of their
+      fake diffusion model's loss function with that of the teacher.
+      In Phased DMD, however, its maintenance is non-trivial since \( x_0 \) is unobservable in all but the final phase.
+      
+      We demonstrate theoretically that a properly formulated loss function allows for unbiased score estimation via subinterval score matching, 
+      formally preserving he coefficients \(a_t = c_t \) and \( b_t = d_t \). Full derivations are provided in our paper.
+      </div>
+      </section>
+
+    <section>
+      <div class="section-title">
+        Conclusion and Discussion
+      </div>
+      <div class="section-content">
+      Phased DMD primarily enhances structural aspects of generation,
+      such as image composition diversity, motion dynamics, and camera control.
+      However, for base models like Qwen-Image, whose outputs are inherently less diverse,
+      the improvement is less pronounced.
+      While this work demonstrates
+      phased distillation within the DMD framework, the approach is generalizable to other objectives like
+      Fisher divergence in SiD<sup class="citation"><a href="#ref-sid"></a></sup>, which we leave for future exploration. It is conceivable
+      that other methods for enhancing diversity and dynamics, such as incorporating trajectory data pregenerated by the base model, could be integrated.
+      However, this would compromise the data-free
+      advantage central to DMD. While we may explore such directions in the future, this work prioritizes
+      the data-free paradigm.
+      </div>
+    </section>
+
+    <section class="reference-section">
+      <h2>References</h2>
+      <!-- <div class="section-title">
+        References
+      </div> -->
+      <ol class="reference-list">
+          <li id="ref-DMD2">Tianwei Yin, Michael Gharbi, Taesung Park, Richard Zhang, Eli Shechtman, Fredo Durand, and Bill Freeman. Improved distribution matching distillation for fast image synthesis. Advances in neural information processing systems, 37:47455–47487, 2024a.</li>
+          <li id="ref-self-forcing">Xun Huang, Zhengqi Li, Guande He, Mingyuan Zhou, and Eli Shechtman. Self forcing: Bridging the train-test gap in autoregressive video diffusion. arXiv preprint arXiv:2506.08009, 2025.</li>
+          <li id="ref-unimatch">Haofei Xu, Jing Zhang, Jianfei Cai, Hamid Rezatofighi, Fisher Yu, Dacheng Tao, and Andreas Geiger. Unifying flow, stereo and depth estimation. IEEE Transactions on Pattern Analysis and Machine Intelligence, 2023.</li>
+          <li id="ref-Vbench">Ziqi Huang, Yinan He, Jiashuo Yu, Fan Zhang, Chenyang Si, Yuming Jiang, Yuanhan Zhang, Tianxing Wu, Qingyang Jin, Nattapol Chanpaisit, et al. Vbench: Comprehensive benchmark suite for video generative models. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 21807–21818, 2024b.</li>
+          <li id="ref-Dinov3">Oriane Simeoni, Huy V. Vo, Maximilian Seitzer, Federico Baldassarre, Maxime Oquab, Cijo Jose, 
+              Vasil Khalidov, Marc Szafraniec, Seungeun Yi, Michael Ramamonjisoa, Francisco Massa, Daniel 
+              Haziza, Luca Wehrstedt, Jianyuan Wang, Timothee Darcet, Theo Moutakanni, Leonel Sentana, 
+              Claire Roberts, Andrea Vedaldi, Jamie Tolan, John Brandt, Camille Couprie, Julien Mairal, Herve
+              Jegou, Patrick Labatut, and Piotr Bojanowski. DINOv3, 2025. URL https://arxiv.org/abs/2508.10104.</li>
+          <li id="ref-lpips">Richard Zhang, Phillip Isola, Alexei A Efros, Eli Shechtman, and Oliver Wang. The unreasonable
+effectiveness of deep features as a perceptual metric. In CVPR, 2018.</li>
+          <li id="ref-sid">Mingyuan Zhou, Huangjie Zheng, Zhendong Wang, Mingzhang Yin, and Hai Huang. Score identity
+          distillation: Exponentially fast distillation of pretrained diffusion models for one-step generation.
+          In Forty-first International Conference on Machine Learning, 2024.</li>
+      </ol>
+    </section>
+
+  
+    <script>
+        // 更新滑块值显示
+        document.getElementById('time-slider').addEventListener('input', function() {
+            const value = (this.value / 100).toFixed(2);
+            document.querySelector('#time-slider + .value-display').textContent = `t = ${value}`;
+        });
+        
+        document.getElementById('noise-slider').addEventListener('input', function() {
+            const value = (this.value / 100).toFixed(2);
+            document.querySelector('#noise-slider + .value-display').textContent = `噪声水平 = ${value}`;
+        });
+        
+        // 初始化MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+  </body>
+</html>
+      
