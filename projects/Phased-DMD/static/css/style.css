@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: black;
+    background-color: rgb(64, 86, 95);
     color: white;
     line-height: 1.5;
     padding: 0;
@@ -99,8 +99,8 @@ a {
     justify-content: center;
     gap: 10px;
     padding: 12px 24px;
-    background-color: rgb(69, 69, 69);
-    /* border-color: black; */
+    background-color: rgb(64, 86, 95);
+    border-color: white;
     border-width: 2px;
     border-style: solid;
     color: white;
@@ -109,14 +109,14 @@ a {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); */
 }
 
 .file-button:hover {
     background-color: white;
     color: black;
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); */
 }
 
 .file-icon {
@@ -148,7 +148,7 @@ section:first-of-type {
 .section-title {
     top: 0;
     padding: 20px 10%;
-    font-size: 20px;
+    font-size: 1.5em;
     font-weight: 600;
     z-index: 1000;
     min-height: 60px;
@@ -243,6 +243,29 @@ tbody tr:hover {
 }
 
 
+
+.gallery-one-column {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 5px;
+    margin-bottom: 60px;
+}
+
+.image-card-one-column {
+    /* background:; */
+    border-radius: 0px;
+    overflow: hidden;
+    /* box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 0px 15%;
+    margin: 0;
+}
+
+.image-card-one-column:hover {
+    transform: scale(1.01);
+    /* box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5); */
+}
+
 .image-row {
     display: contents;
     padding: 0px;
@@ -252,7 +275,7 @@ tbody tr:hover {
     background: white;
     border-radius: 0px;
     overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     padding: 0px;
     margin: 0;
@@ -260,7 +283,7 @@ tbody tr:hover {
 
 .image-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5); */
 }
 
 .image-container {

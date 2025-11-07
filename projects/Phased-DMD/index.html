@@ -1,5 +1,7 @@
 <html lang="en" data-theme="dark">
   <head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -82,38 +84,6 @@
       </div>
     </section>
       
-<!-- 
-    <section>
-      <div class="section-title">
-        Method
-      </div>
-      <div class="section-content">
-      Distribution Matching Distillation (DMD) distills score-based generative models
-      into efficient one-step generators, without requiring a one-to-one correspondence
-      with the sampling trajectories of their teachers. However, limited model capacity
-      causes one-step distilled models underperform on complex generative tasks, e.g.,
-      synthesizing intricate object motions in text-to-video generation.
-      Directly extending DMD to multi-step distillation increases memory usage and computational
-      depth, leading to instability and reduced efficiency.
-      While prior works<sup class="citation"><a href="#ref-self-forcing"></a></sup>  propose
-      stochastic gradient truncation (SGTS) as a potential solution,
-      we observe that it substantially reduces the generation diversity of multi-step distilled models,
-      bringing it down to the level of their one-step counterparts.
-      To address these limitations,
-      we propose Phased DMD, a multi-step distillation framework that bridges the
-      idea of phase-wise distillation with Mixture-of-Experts (MoE), reducing learning
-      difficulty while enhancing model capacity. Phased DMD is built upon two key
-      ideas: <b>progressive distribution matching</b> and <b>score matching within subintervals</b>.
-      First, our method divides the SNR range into subintervals,
-      progressively refining the model to higher SNR levels, to better capture complex distributions.
-      Next, to ensure the training objective within each subinterval is accurate,
-      we have conducted rigorous mathematical derivations. We validate Phased DMD by distilling
-      state-of-the-art image and video generation models, including Qwen-Image (20B
-      parameters) and Wan2.2 (28B parameters). Experimental results demonstrate that
-      Phased DMD preserves output diversity better than DMD while retaining key generative capabilities of the original models.
-      </div>
-    </section> -->
-
     <section>
       <div class="section-title">
         Phased DMD for Video Generation
@@ -340,6 +310,77 @@
     </section>
 
 
+
+    <section>
+      <div class="section-title">
+        Method
+      </div>
+
+      <div class="section-content">
+      The figure below illustrates the differences among vanilla DMD, DMD with SGTS, and our proposed Phased DMD.
+
+      (a) Directly extending DMD to multi-step distillation paradigm increases memory usage and computational depth.
+
+      (b) The SGTS approach addresses this by selecting a random step as the last generation diffusion step,
+      recording gradients only to that step.
+      While this strategy substantially reduces memory consumption and computational cost during training,
+      it can degenerate into a one-step distillation in certain iterations,
+      thereby limiting the model's generative capacity.
+
+      (c) Phased DMD avoids this issue by partitioning the distillation process into distinct phases and applying supervision at intermediate timesteps.
+      In each phase except the last, the generator is optimized
+      to minimize the reverse KL divergence at an intermediate timestep, while the fake diffusion model
+      is updated via score matching within a subinterval of the diffusion process.
+
+      (d) Crucially, Phased DMD remains compatible with SGTS, enabling
+      4-step inference across 2 phases while simplifying the system complexity for both training and inference.
+      </div>
+      <div class="gallery-one-column">
+        <div class="image-row">
+              <div class="image-card-one-column">
+                  <div class="image-container">
+                    <img src="./assets/method/phased_dmd_diagram.png"></img>
+                  </div>
+              </div>
+        </div>
+      <div class="section-content">
+      DMD and related methods within the Variational Score Distillation (VSD) framework
+      comprise three core components: a teacher diffusion model \(T\), a "fake" diffusion model \(F\), and a generator  \(G\) to be distilled.
+      The theoretical validity of this framework is predicated on the relationship between the diffusion model's prediction and the score function \(\nabla_{x_t} \log(p(x_t)) \).
+
+      Formally, assuming the teacher diffusion model's prediction follows \( T_(x_t) = a_t \nabla_{x_t} \log(p(x_t)) + b_t x_t \)
+      and the fake diffusion model's prediction follows  \(F_(x_t) = c_t \nabla_{x_t} \log(p(x_t)) + d_t x_t \),
+      the theoretical justification for DMD and related VSD methods necessitates the coefficients to be identical—that is,
+      \(a_t = c_t \) and \( b_t = d_t \).
+
+      The satisfaction of this condition is straightforward in vanilla DMD and DMD with SGTS, given the direct alignment of their
+      fake diffusion model's loss function with that of the teacher.
+      In Phased DMD, however, its maintenance is non-trivial since \( x_0 \) is unobservable in all but the final phase.
+      
+      We demonstrate theoretically that a properly formulated loss function allows for unbiased score estimation via subinterval score matching, 
+      formally preserving he coefficients \(a_t = c_t \) and \( b_t = d_t \). Full derivations are provided in our paper.
+      </div>
+      </section>
+
+    <section>
+      <div class="section-title">
+        Conclusion and Discussion
+      </div>
+      <div class="section-content">
+      Phased DMD primarily enhances structural aspects of generation,
+      such as image composition diversity, motion dynamics, and camera control.
+      However, for base models like Qwen-Image, whose outputs are inherently less diverse,
+      the improvement is less pronounced.
+      While this work demonstrates
+      phased distillation within the DMD framework, the approach is generalizable to other objectives like
+      Fisher divergence in SiD<sup class="citation"><a href="#ref-sid"></a></sup>, which we leave for future exploration. It is conceivable
+      that other methods for enhancing diversity and dynamics, such as incorporating trajectory data pregenerated by the base model, could be integrated.
+      However, this would compromise the data-free
+      advantage central to DMD. While we may explore such directions in the future, this work prioritizes
+      the data-free paradigm.
+      </div>
+    </section>
+
     <section class="reference-section">
       <h2>References</h2>
       <!-- <div class="section-title">
@@ -357,6 +398,35 @@
               Jegou, Patrick Labatut, and Piotr Bojanowski. DINOv3, 2025. URL https://arxiv.org/abs/2508.10104.</li>
           <li id="ref-lpips">Richard Zhang, Phillip Isola, Alexei A Efros, Eli Shechtman, and Oliver Wang. The unreasonable
 effectiveness of deep features as a perceptual metric. In CVPR, 2018.</li>
+          <li id="ref-sid">Mingyuan Zhou, Huangjie Zheng, Zhendong Wang, Mingzhang Yin, and Hai Huang. Score identity
+          distillation: Exponentially fast distillation of pretrained diffusion models for one-step generation.
+          In Forty-first International Conference on Machine Learning, 2024.</li>
       </ol>
     </section>
+
+  
+    <script>
+        // 更新滑块值显示
+        document.getElementById('time-slider').addEventListener('input', function() {
+            const value = (this.value / 100).toFixed(2);
+            document.querySelector('#time-slider + .value-display').textContent = `t = ${value}`;
+        });
+        
+        document.getElementById('noise-slider').addEventListener('input', function() {
+            const value = (this.value / 100).toFixed(2);
+            document.querySelector('#noise-slider + .value-display').textContent = `噪声水平 = ${value}`;
+        });
+        
+        // 初始化MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+  </body>
+</html>
       
