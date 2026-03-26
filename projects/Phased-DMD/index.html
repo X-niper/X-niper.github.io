@@ -16,6 +16,9 @@
     <title>Phased DMD</title>
     <meta name="description" content="Few-step Distribution Matching Distillation via Score Matching within Subintervals">
     <meta name="keywords" content="Video generation, image generation, text-to-video, image-to-video, text-to-image, diffusion model, fast, real-time, distillation, DMD">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./static/css/style.css" />
   </head>
 
@@ -61,11 +64,11 @@
       Distribution Matching Distillation (DMD)<sup class="citation"><a href="#ref-DMD2"></a></sup> distills score-based generative models
       into efficient one-step generators, without requiring a one-to-one correspondence
       with the sampling trajectories of their teachers. However, limited model capacity
-      causes one-step distilled models underperform on complex generative tasks, e.g.,
+      causes one-step distilled models to underperform on complex generative tasks, e.g.,
       synthesizing intricate object motions in text-to-video generation.
       Directly extending DMD to multi-step distillation increases memory usage and computational
       depth, leading to instability and reduced efficiency.
-      While prior works<sup class="citation"><a href="#ref-self-forcing"></a></sup>  propose
+      While prior works<sup class="citation"><a href="#ref-DMD2"></a></sup><sup class="citation"><a href="#ref-self-forcing"></a></sup> propose
       stochastic gradient truncation (SGTS) as a potential solution,
       we observe that it substantially reduces the generation diversity of multi-step distilled models,
       bringing it down to the level of their one-step counterparts.
@@ -89,19 +92,19 @@
         Phased DMD for Video Generation
       </div>
       <div class="section-content">
-        In contrast to DMD with SGTS,
-        Phased-DMD achieves higher fidelity in replicating both the <b>motion patterns</b>
-        and the <b>camera movements</b> present in the original teacher model's video outputs.
-        The video below presents a comparative analysis of the two methods on the wan2.2-T2V-A14B model.
-        The first column features outputs from the model distilled using DMD with SGTS,
+        In contrast to DMD2,
+        Phased-DMD achieves higher fidelity in replicating both the motion patterns
+        and the camera movements present in the original teacher model's video outputs.
+        The video below presents a comparative analysis of the two methods on the Wan2.2-T2V-A14B model.
+        The first column features outputs from the model distilled using DMD2,
         the second column displays results from Phased-DMD,
         and the third column presents generations from the base teacher model.
         This compilation comprises all 220 test examples from our evaluation set,
         with all videos generated using a fixed seed of 42.
-        The presentation is <b>not</b> cherry-picked and is representative of typical performance.
+        The presentation is <b>NOT cherry-picked</b> and is representative of typical performance.
         As the results demonstrate, the base model, utilizing 40 steps (80 NFE),
         represents the upper benchmark of performance.
-        Phased-DMD, using only 4 steps (4 NFE), yields significantly superior results to standard DMD,
+        Phased-DMD, using only 4 steps (4 NFE), yields significantly superior results to DMD2,
         particularly in the fidelity of motion dynamics and camera movement.
         Notably, the color rendition in Phased-DMD generations also more closely aligns with that of the base model.
       </div>
@@ -110,10 +113,10 @@
       </div>
       <div class="section-content">
         We quantitatively evaluate motion intensity using 
-        the mean absolute optical flow, computed with  Unimatch<sup class="citation"><a href="#ref-unimatch"></a></sup>
+        the mean absolute optical flow, computed with Unimatch<sup class="citation"><a href="#ref-unimatch"></a></sup>
         and the dynamic degree metric from VBench<sup class="citation"><a href="#ref-Vbench"></a></sup>.
         The results, summarized in the table below,
-        confirm that Phased-DMD more accurately captures motion dynamics than DMD with SGTS for <b>both T2V and I2V tasks</b>.
+        confirm that Phased-DMD more accurately captures motion dynamics than DMD2 for both T2V and I2V tasks.
       </div>
         
       <div class="table-container">
@@ -140,7 +143,7 @@
                       <td class="underline">82.27%</td>
                   </tr>
                   <tr>
-                      <td class="method-column">DMD with SGTS (lightning v1.x)</td>
+                      <td class="method-column">DMD2 (lightning v1.x)</td>
                       <td>3.23</td>
                       <td>65.45%</td>
                       <td>7.87</td>
@@ -164,7 +167,7 @@
         Phased DMD for Image Generation
       </div>
       <div class="section-content">
-        We perform image generation distillation experiments on three base models, wan2.1-T2V-14B, wan2.2-T2V-A14B and Qwen-Image-20B.
+        We perform image generation distillation experiments on three base models: Wan2.1-T2V-14B, Wan2.2-T2V-A14B, and Qwen-Image-20B.
         To evaluate generative diversity, we constructed a text-to-image test set comprising 21 prompts.
         Each prompt provides a short description of the image content without detailed specifications.
         For each prompt, we generated 8 images using seeds from 0 to 7. For the base model, images are
@@ -176,7 +179,7 @@
         Both metrics are computed across images
         generated from the same prompt using different seeds.
         As expected, the base models achieve the highest diversity.
-        Phased DMD outperforms both vanilla DMD and DMD with SGTS.
+        Phased DMD outperforms both vanilla DMD and DMD2.
         The diversity improvement on Qwen-Image is marginal. We argue this stems from the base model’s
         own limited output diversity.
       </div>
@@ -209,7 +212,7 @@
                       <td class="highlight">0.483</td>
                   </tr>
                   <tr>
-                      <td class="method-column">DMD</td>
+                      <td class="method-column">Vanilla DMD</td>
                       <td>0.825</td>
                       <td>0.522</td>
                       <td>-</td>
@@ -218,7 +221,7 @@
                       <td>-</td>
                   </tr>
                   <tr>
-                      <td class="method-column">DMD with SGTS</td>
+                      <td class="method-column">DMD2</td>
                       <td>0.826</td>
                       <td>0.521</td>
                       <td>0.828</td>
@@ -244,7 +247,7 @@
 
       <div class="section-content">
         The following four images were generated by the distilled Wan2.1-T2V-14B model using Phased-DMD,
-        based on the prompt: "A mother braiding her daughter hair, sunlight warming the room."
+        based on the prompt: "A mother braiding her daughter's hair, sunlight warming the room."
         The outputs exhibit considerable diversity in color schemes, compositional structure, and lighting conditions.
       </div>
       <div class="gallery">
@@ -317,9 +320,9 @@
       </div>
 
       <div class="section-content">
-      The figure below illustrates the differences among vanilla DMD, DMD with SGTS, and our proposed Phased DMD.
+      The figure below illustrates the differences among vanilla DMD, DMD2, and our proposed Phased DMD.
 
-      (a) Directly extending DMD to multi-step distillation paradigm increases memory usage and computational depth.
+      (a) Directly extending DMD to a multi-step distillation paradigm increases memory usage and computational depth.
 
       (b) The SGTS approach addresses this by selecting a random step as the last generation diffusion step,
       recording gradients only to that step.
@@ -345,20 +348,20 @@
         </div>
       <div class="section-content">
       DMD and related methods within the Variational Score Distillation (VSD) framework
-      comprise three core components: a teacher diffusion model \(T\), a "fake" diffusion model \(F\), and a generator  \(G\) to be distilled.
+      comprise three core components: a teacher diffusion model \(T\), a "fake" diffusion model \(F\), and a generator \(G\) to be distilled.
       The theoretical validity of this framework is predicated on the relationship between the diffusion model's prediction and the score function \(\nabla_{x_t} \log(p(x_t)) \).
 
       Formally, assuming the teacher diffusion model's prediction follows \( T_(x_t) = a_t \nabla_{x_t} \log(p(x_t)) + b_t x_t \)
-      and the fake diffusion model's prediction follows  \(F_(x_t) = c_t \nabla_{x_t} \log(p(x_t)) + d_t x_t \),
-      the theoretical justification for DMD and related VSD methods necessitates the coefficients to be identical—that is,
+      and the fake diffusion model's prediction follows \(F_(x_t) = c_t \nabla_{x_t} \log(p(x_t)) + d_t x_t \),
+      the theoretical justification for DMD and related VSD methods requires the coefficients to be identical—that is,
       \(a_t = c_t \) and \( b_t = d_t \).
 
-      The satisfaction of this condition is straightforward in vanilla DMD and DMD with SGTS, given the direct alignment of their
+      The satisfaction of this condition is straightforward in vanilla DMD and DMD2, given the direct alignment of their
       fake diffusion model's loss function with that of the teacher.
       In Phased DMD, however, its maintenance is non-trivial since \( x_0 \) is unobservable in all but the final phase.
       
       We demonstrate theoretically that a properly formulated loss function allows for unbiased score estimation via subinterval score matching, 
-      formally preserving he coefficients \(a_t = c_t \) and \( b_t = d_t \). Full derivations are provided in our paper.
+      formally preserving the coefficients \(a_t = c_t \) and \( b_t = d_t \). Full derivations are provided in our paper.
       </div>
       </section>
 
